@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>Timeline | Basic demo</title>
+
+  <style type="text/css">
+    body, html {
+      font-family: sans-serif;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.19.1/vis-timeline-graph2d.min.css"></link>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.19.1/vis-timeline-graph2d.min.js"></script>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.19.1/vis.css"></link>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.19.1/vis.js"></script>
+</head>
+<body>
+<h1>Hi</h1>
+
+<div id="visualization"></div>
+<script type="text/javascript">
+
+  function str(date) {
+    var monthNames = [
+      "January", "February", "March",
+      "April", "May", "June", "July",
+      "August", "September", "October",
+      "November", "December"
+    ];
+
+    var day = date.getDate();
+    var monthIndex = date.getMonth();
+    var year = date.getFullYear();
+
+    return day + ' ' + monthNames[monthIndex] + ' ' + year;
+  }
+
+  fetch('data.json')
+  .then(data => data.json())
+  .then(data => data.map((e, id) => {
+    const end = new Date(e.end)
+    const start = new Date(e.start)
+      
+    return ({
+      end,
+      start,
+      content: e.label || e.entry,
+      id,
+      title: `${e.label || e.entry} | ${str(start)} - ${str(end)}`,
+    })
+  }))
+  .then(data => {
+    
+    //data = data.filter(e => e.title.indexOf('War') > -1)
+
+    // DOM element where the Timeline will be attached
+    var container = document.getElementById('visualization');
+     
+    var items2 = new vis.DataSet(data.slice(0,400))
+
+    // Create a DataSet (allows two way data-binding)
+    var items = new vis.DataSet([
+      {id: 1, content: 'item 1', start: '2013-04-20'},
+      {id: 2, content: 'item 2', start: '2013-04-14'},
+      {id: 3, content: 'item 3', start: '2013-04-18'},
+      {id: 4, content: 'item 4', start: '2013-04-16', end: '2013-04-19'},
+      {id: 5, content: 'item 5', start: '2013-04-25'},
+      {id: 6, content: 'item 6', start: '2013-04-27'}
+    ]);
+
+    // Configuration for the Timeline
+    var options = {};
+
+    // Create a Timeline
+    var timeline = new vis.Timeline(container, items2, options);
+  })
+  .catch(console.error)
+
+</script>
+</body>
+</html>
